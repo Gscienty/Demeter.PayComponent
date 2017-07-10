@@ -44,6 +44,36 @@ namespace Gscienty.WechatPay.Defines
         PostDataEmpty,
 
         [DefineMapName("NOT_UTF8")]
-        NotUTF8
+        NotUTF8,
+
+        [DefineMapName("ORDERNOTEXIST")]
+        OrderNotExist,
+
+        [DefineMapName("ORDERPAID")]
+        OrderPaid,
+
+        [DefineMapName("BIZERR_NEED_RETRY")]
+        BizerrNeedRetry,
+        
+        [DefineMapName("TRADE_OVERDUE")]
+        TradeOverdue,
+
+        [DefineMapName("ERROR")]
+        Error,
+
+        [DefineMapName("USER_ACCOUNT_ABNORMAL")]
+        UserAccountAbnormal,
+
+        [DefineMapName("INVALID_REQ_TOO_MUCH")]
+        InvalidRequestTooMuch,
+
+        [DefineMapName("INVALID_TRANSACTIONID")]
+        InvalidTransactionID,
+
+        [DefineMapName("PARAM_ERROR")]
+        ParameterError,
+
+        [DefineMapName("FREQUENCY_LIMITED")]
+        FrequencyLimited
     }
 }

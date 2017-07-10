@@ -12,6 +12,6 @@ namespace Gscienty.WechatPay.Attributes
             this._name = name;
         }
         
-        public string PositionalString => this._name;
+        public string Name => this._name;
     }
 }

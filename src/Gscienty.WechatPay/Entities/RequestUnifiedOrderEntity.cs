@@ -26,11 +26,11 @@ namespace Gscienty.WechatPay.Entities
 
         [ParameterName("fee_type")]
         [ParameterMaxLength(16)]
-        public FeeType FeeType { get; set; }
+        public FeeType? FeeType { get; set; }
 
         [IsRequisiteParameter]
         [ParameterName("total_fee")]
-        public int TotalFee { get; set; }
+        public int? TotalFee { get; set; }
 
         [IsRequisiteParameter]
         [ParameterName("spbill_create_ip")]
@@ -39,11 +39,11 @@ namespace Gscienty.WechatPay.Entities
 
         [ParameterName("time_start")]
         [ParameterMaxLength(14)]
-        public DateTime TimeStart { get; set; }
+        public DateTime? TimeStart { get; set; }
 
         [ParameterName("time_expire")]
         [ParameterMaxLength(14)]
-        public DateTime TimeExpire { get; set; }
+        public DateTime? TimeExpire { get; set; }
 
         [ParameterName("goods_tag")]
         [ParameterMaxLength(32)]
@@ -57,7 +57,7 @@ namespace Gscienty.WechatPay.Entities
         [IsRequisiteParameter]
         [ParameterName("trade_type")]
         [ParameterMaxLength(16)]
-        public TradeType TradeType { get; set; }
+        public TradeType? TradeType { get; set; }
 
         [ParameterName("product_id")]
         [ParameterMaxLength(32)]
