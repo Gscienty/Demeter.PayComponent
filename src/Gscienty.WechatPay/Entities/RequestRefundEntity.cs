@@ -29,7 +29,7 @@ namespace Gscienty.WechatPay.Entities
 
         [ParameterName("refund_fee_type")]
         [ParameterMaxLength(8)]
-        public CashFeeType? RefundFeeType { get; set; }
+        public CashFeeType RefundFeeType { get; set; }
 
         [ParameterName("refund_desc")]
         [ParameterMaxLength(80)]

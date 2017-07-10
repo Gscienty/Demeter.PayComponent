@@ -4,6 +4,7 @@ namespace Gscienty.WechatPay.Defines
 {
     public enum TradeType
     {
+        Unset,
         [DefineMapName("JSAPI")]
         JSAPI,
         [DefineMapName("NATIVE")]

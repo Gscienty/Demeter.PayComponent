@@ -4,6 +4,7 @@ namespace Gscienty.WechatPay.Defines
 {
     public enum TradeStateType
     {
+        Unset,
         [DefineMapName("SUCCESS")]
         Success,
         [DefineMapName("REFUND")]

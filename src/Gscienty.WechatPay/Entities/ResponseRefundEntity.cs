@@ -41,7 +41,7 @@ namespace Gscienty.WechatPay.Entities
 
         [ParameterName("fee_type")]
         [ParameterMaxLength(8)]
-        public CashFeeType? FeeType { get; set; }
+        public CashFeeType FeeType { get; set; }
 
         [IsRequisiteParameter]
         [ParameterName("cash_fee")]
@@ -49,7 +49,7 @@ namespace Gscienty.WechatPay.Entities
 
         [ParameterName("cash_fee_type")]
         [ParameterMaxLength(16)]
-        public CashFeeType? CashFeeType { get; set; }
+        public CashFeeType CashFeeType { get; set; }
 
         [ParameterName("cash_refund_fee")]
         public int? CashRefundFee { get; set; }
@@ -58,7 +58,7 @@ namespace Gscienty.WechatPay.Entities
         public int? CouponCount { get; set; }
 
         [ParameterName("coupon_type_$n")]
-        public CouponType? CouponType { get; set; }
+        public CouponType CouponType { get; set; }
 
         [ParameterName("coupon_id_$n")]
         [ParameterMaxLength(20)]

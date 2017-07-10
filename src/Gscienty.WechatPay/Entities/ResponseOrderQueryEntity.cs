@@ -47,13 +47,13 @@ namespace Gscienty.WechatPay.Entities
 
         [ParameterName("cash_fee_type")]
         [ParameterMaxLength(16)]
-        public CashFeeType? CashFeeType { get; set; }
+        public CashFeeType CashFeeType { get; set; }
 
         [ParameterName("coupon_count")]
         public int? CouponCount { get; set; }
 
         [ParameterName("coupon_type_$n")]
-        public CouponType? CouponType { get; set; }
+        public CouponType CouponType { get; set; }
 
         [ParameterName("coupon_id_$n")]
         [ParameterMaxLength(20)]

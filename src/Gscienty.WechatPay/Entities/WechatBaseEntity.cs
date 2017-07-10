@@ -32,6 +32,6 @@ namespace Gscienty.WechatPay.Entities
 
         [ParameterName("sign_type")]
         [ParameterMaxLength(32)]
-        public SignType? SignType { get; set; }
+        public SignType SignType { get; set; }
     }
 }

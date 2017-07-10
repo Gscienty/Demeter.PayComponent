@@ -26,7 +26,7 @@ namespace Gscienty.WechatPay.Entities
 
         [ParameterName("fee_type")]
         [ParameterMaxLength(16)]
-        public FeeType? FeeType { get; set; }
+        public FeeType FeeType { get; set; }
 
         [IsRequisiteParameter]
         [ParameterName("total_fee")]
@@ -57,7 +57,7 @@ namespace Gscienty.WechatPay.Entities
         [IsRequisiteParameter]
         [ParameterName("trade_type")]
         [ParameterMaxLength(16)]
-        public TradeType? TradeType { get; set; }
+        public TradeType TradeType { get; set; }
 
         [ParameterName("product_id")]
         [ParameterMaxLength(32)]

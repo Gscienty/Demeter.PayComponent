@@ -8,7 +8,7 @@ namespace Gscienty.WechatPay.Entities
         [IsRequisiteParameter]
         [ParameterName("trade_type")]
         [ParameterMaxLength(16)]
-        public TradeType? TradeType { get; set; }
+        public TradeType TradeType { get; set; }
 
         [IsRequisiteParameter]
         [ParameterName("prepay_id")]

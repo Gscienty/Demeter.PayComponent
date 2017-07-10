@@ -8,7 +8,7 @@ namespace Gscienty.WechatPay.Entities
         [IsRequisiteParameter]
         [ParameterName("return_code")]
         [ParameterMaxLength(16)]
-        public ReturnCodeType? ReturnCode { get; set; }
+        public ReturnCodeType ReturnCode { get; set; }
         
         [ParameterName("return_msg")]
         [ParameterMaxLength(128)]
@@ -17,11 +17,11 @@ namespace Gscienty.WechatPay.Entities
         [IsRequisiteParameter]
         [ParameterName("result_code")]
         [ParameterMaxLength(16)]
-        public ReturnCodeType? ResultCode { get; set; }
+        public ReturnCodeType ResultCode { get; set; }
 
         [ParameterName("err_code")]
         [ParameterMaxLength(32)]
-        public ErrorCodeType? ErrorCode { get; set; }
+        public ErrorCodeType ErrorCode { get; set; }
 
         [ParameterName("err_code_des")]
         [ParameterMaxLength(128)]

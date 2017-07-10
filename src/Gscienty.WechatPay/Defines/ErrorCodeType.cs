@@ -4,6 +4,7 @@ namespace Gscienty.WechatPay.Defines
 {
     public enum ErrorCodeType
     {
+        Unset,
         [DefineMapName("NOAUTH")]
         NoAuthorization,
 
