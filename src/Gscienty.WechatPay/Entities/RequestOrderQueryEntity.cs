@@ -2,7 +2,7 @@ using Gscienty.WechatPay.Attributes;
 
 namespace Gscienty.WechatPay.Entities
 {
-    public sealed class RequestOrderQueryEntity
+    public sealed class RequestOrderQueryEntity : WechatBaseEntity
     {
         [ParameterName("transaction_id")]
         [ParameterMaxLength(32)]
