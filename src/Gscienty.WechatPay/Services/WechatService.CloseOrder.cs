@@ -4,12 +4,12 @@ namespace Gscienty.WechatPay.Services
 {
     partial class WechatService
     {
-        public ResponseOrderQueryEntity QueryOrder(RequestOrderQueryEntity entity)
+        public ResponseCloseOrderEntity CloseOrder(RequestCloseOrderEntity entity)
         {
             this.PackageEntity(entity);
 
-            return this.CallRemoteMethod<ResponseOrderQueryEntity>(
-                "https://api.mch.weixin.qq.com/pay/orderquery",
+            return this.CallRemoteMethod<ResponseCloseOrderEntity>(
+                "https://api.mch.weixin.qq.com/pay/closeorder",
                 XMLConstructor.Constructor(entity)
             );
         }

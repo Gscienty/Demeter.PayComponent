@@ -4,7 +4,7 @@ namespace Gscienty.WechatPay.Services
 {
     partial class WechatService
     {
-        ResponseUnifiedOrderEntity UnifiedOrder(RequestUnifiedOrderEntity entity)
+        public ResponseUnifiedOrderEntity UnifiedOrder(RequestUnifiedOrderEntity entity)
         {
             entity.NotifyURI = this._settings.PaymentNotifyURI;
 
