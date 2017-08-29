@@ -17,8 +17,8 @@ namespace Gscienty.WechatPay.Services
                 uri,
                 new StringContent(body, Encoding.UTF8)
             ).Result.Content.ReadAsStringAsync().Result;
-            
-            sender.Dispose();            
+            System.Console.WriteLine(result);
+            sender.Dispose();         
             T responseEntity = XMLParser.Parser<T>(result);
 
             return responseEntity;

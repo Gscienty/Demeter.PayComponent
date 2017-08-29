@@ -3,7 +3,7 @@ using System;
 namespace Gscienty.WechatPay.Attributes
 {
     [System.AttributeUsage(System.AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-    sealed class DefineMapNameAttribute : System.Attribute
+    public sealed class DefineMapNameAttribute : System.Attribute
     {
         readonly string _name;
         

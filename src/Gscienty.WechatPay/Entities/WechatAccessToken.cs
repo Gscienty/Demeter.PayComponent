@@ -4,19 +4,19 @@ namespace Gscienty.WechatPay.Entities
 {
     public sealed class WechatAccessToken
     {
-        [JsonPropertyAttribute("access_token")]
+        [JsonProperty("access_token")]
         public string AccessToken { get; set; }
 
-        [JsonPropertyAttribute("expres_in")]
+        [JsonProperty("expres_in")]
         public int ExpresIn { get; set; }
 
-        [JsonPropertyAttribute("refresh_token")]
+        [JsonProperty("refresh_token")]
         public string RefreshToken { get; set; }
 
-        [JsonPropertyAttribute("openid")]
+        [JsonProperty("openid")]
         public string OpenId { get; set; }
         
-        [JsonPropertyAttribute("scope")]
+        [JsonProperty("scope")]
         public string Scope { get; set; }
     }
 }

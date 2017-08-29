@@ -30,5 +30,9 @@ namespace Gscienty.WechatPay.AspNetCore.Extension
             
         WechatAccessToken IWechatPayManager.GetAccessToken(string code) =>
             this._service.GetAccessToken(code);
+
+        ResponseCloseOrderEntity IWechatPayManager.CloseOrder(RequestCloseOrderEntity entity) =>
+            this._service.CloseOrder(entity);
+        
     }
 }

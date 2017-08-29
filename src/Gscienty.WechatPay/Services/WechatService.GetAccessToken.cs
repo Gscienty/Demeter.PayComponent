@@ -14,7 +14,6 @@ namespace Gscienty.WechatPay.Services
             string responseJson = (new HttpClient())
                 .GetAsync(requestURI).Result.Content
                 .ReadAsStringAsync().Result;
-            
             if(responseJson.Contains("errcode"))
             {
                 return null;

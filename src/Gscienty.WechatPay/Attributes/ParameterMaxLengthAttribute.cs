@@ -3,7 +3,7 @@ using System;
 namespace Gscienty.WechatPay.Attributes
 {
     [System.AttributeUsage(System.AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
-    sealed class ParameterMaxLengthAttribute : System.Attribute
+    public sealed class ParameterMaxLengthAttribute : System.Attribute
     {
         readonly int _maxLength;
         

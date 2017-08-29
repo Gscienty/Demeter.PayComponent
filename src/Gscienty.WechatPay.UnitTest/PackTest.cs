@@ -3,6 +3,7 @@ using Xunit;
 
 using Gscienty.WechatPay;
 using Gscienty.WechatPay.Entities;
+using Gscienty.WechatPay.Services;
 
 namespace Gscienty.WechatPay.UnitTest
 {
@@ -45,6 +46,12 @@ namespace Gscienty.WechatPay.UnitTest
                 "</xml>");
 
             Assert.Equal(SignBuilder.GenerateSign(entity, "123123"), "30FBD753404DDE4EC124D6A8AE8AB2CE");
+        }
+
+        [Fact]
+        public void Test4()
+        {
+            WechatService service 
         }
     }
 }

@@ -3,7 +3,7 @@ using System;
 namespace Gscienty.WechatPay.Attributes
 {
     [AttributeUsage(System.AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
-    internal sealed class ParameterNameAttribute : Attribute
+    public sealed class ParameterNameAttribute : Attribute
     {
         readonly string _parameterName;
         
