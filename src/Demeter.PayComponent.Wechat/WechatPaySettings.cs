@@ -11,5 +11,6 @@ namespace Demeter.PayComponent.Wechat
         public string PaymentNotifyURI { get; set; }
         public X509Certificate2 Certificate { get; set; }
         public string CertificatePassword { get; set; }
+        public WechatPaySignType SignType { get; set; }
     }
 }

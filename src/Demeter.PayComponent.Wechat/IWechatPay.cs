@@ -1,11 +1,12 @@
 using System.Threading.Tasks;
 using Demeter.PayComponent.Wechat.RequestEntity;
+using Demeter.PayComponent.Wechat.ResponseEntity;
 
 namespace Demeter.PayComponent.Wechat
 {
     public interface IWechatPay
     {
-        Task<string> Pay(UnifiedOrder unifiedOrder);
+        Task<UnifiedOrderResponse> Pay(UnifiedOrderRequest unifiedOrder);
 
         void Query();
 

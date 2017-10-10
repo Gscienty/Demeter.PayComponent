@@ -9,6 +9,8 @@ using System.IO;
 using System.Threading.Tasks;
 using Demeter.PayComponent.Wechat.RequestEntity;
 using Demeter.PayComponent.Wechat.RequestEntity.Attribute;
+using Demeter.PayComponent.Wechat.ResponseEntity;
+using Demeter.PayComponent.Wechat.ResponseEntity.Attribute;
 
 
 namespace Demeter.PayComponent.Wechat
@@ -27,7 +29,7 @@ namespace Demeter.PayComponent.Wechat
             this._commonRequestEntity = new SortedList<string, string>();
             this._commonRequestEntity.Add("appid", this._settings.AppId);
             this._commonRequestEntity.Add("mch_id", this._settings.MerchantId);
-            this._commonRequestEntity.Add("sign_type", "MD5");
+            this._commonRequestEntity.Add("sign_type", Constant.SignTypeTransfer(this._settings.SignType));
         }
 
         void IWechatPay.Close()
@@ -35,7 +37,7 @@ namespace Demeter.PayComponent.Wechat
             throw new System.NotImplementedException();
         }
 
-        async Task<string> IWechatPay.Pay(UnifiedOrder unifiedOrder)
+        async Task<UnifiedOrderResponse> IWechatPay.Pay(UnifiedOrderRequest unifiedOrder)
         {
             var requestEntity = this.GenerateCommonRequestEntity();
             requestEntity.Add("notify_url", this._settings.PaymentNotifyURI);
@@ -43,12 +45,12 @@ namespace Demeter.PayComponent.Wechat
             this.FillRequestEntity(
                 ref requestEntity,
                 unifiedOrder,
-                new SortedSet<string>(new [] {
-                    "body", "out_trade_no", "total_fee", "spbill_create_ip", "trade_type"
-                })
+                new SortedSet<string>(
+                    new [] { "body", "out_trade_no", "total_fee", "spbill_create_ip", "trade_type"}
+                )
             );
 
-            return await this.CallAsync(Constant.UnifiedOrder, requestEntity);
+            return await this.CallAsync<UnifiedOrderResponse>(Constant.UnifiedOrder, requestEntity);
         }
 
         void IWechatPay.Query()
@@ -61,7 +63,20 @@ namespace Demeter.PayComponent.Wechat
             throw new System.NotImplementedException();
         }
 
-        private Task<string> CallAsync(string uri, SortedList<string, string> requestEntity)
+        private async Task<T> CallAsync<T>(string uri, SortedList<string, string> requestEntity)
+            where T : class, new()
+        {
+            string postBody = this.GeneratePostBody(requestEntity);
+
+            HttpClient sender = new HttpClient();
+            var response = await sender.PostAsync(uri, new StringContent(postBody, Encoding.UTF8));
+            string message = await response.Content.ReadAsStringAsync();
+            sender.Dispose();
+            
+            return this.GenerateResponseEntity<T>(message);
+        }
+
+        private string GeneratePostBody(SortedList<string, string> requestEntity)
         {
             requestEntity.Add("sign", this.CalculateSign(requestEntity));
             XmlDocument requestDocument = new XmlDocument();
@@ -74,8 +89,37 @@ namespace Demeter.PayComponent.Wechat
                 propertyElement.InnerXml = item.Value;
                 rootElement.AppendChild(propertyElement);
             }
-            
-            return Task.FromResult(requestDocument.InnerXml);
+            return requestDocument.InnerXml;
+        }
+
+        private T GenerateResponseEntity<T>(string xmlBody)
+            where T : class, new()
+        {
+            T instance = new T();
+            XmlDocument responseDocument = new XmlDocument();
+            responseDocument.LoadXml(xmlBody);
+
+            Dictionary<string, object> responseEntity = new Dictionary<string, object>();
+
+            foreach(XmlNode child in responseDocument.DocumentElement.ChildNodes)
+            {
+                responseEntity.Add(child.Name, child.InnerText);
+            }
+
+            foreach (PropertyInfo property in typeof(T).GetRuntimeProperties())
+            {
+                ResponseNameAttribute responseName = property.GetCustomAttribute<ResponseNameAttribute>();
+                if (responseName == null)
+                {
+                    throw new InvalidOperationException();
+                }
+                if (responseEntity.ContainsKey(responseName.Name))
+                {
+                    property.SetValue(instance, responseEntity[responseName.Name]);
+                }
+            }
+
+            return instance;
         }
 
         private void FillRequestEntity(
@@ -83,7 +127,7 @@ namespace Demeter.PayComponent.Wechat
             object entity,
             ISet<string> required)
         {
-            foreach(PropertyInfo property in entity.GetType().GetRuntimeProperties())
+            foreach (PropertyInfo property in entity.GetType().GetRuntimeProperties())
             {
                 RequestNameAttribute requestName = property.GetCustomAttribute<RequestNameAttribute>();
                 if (requestName == null)
@@ -121,17 +165,38 @@ namespace Demeter.PayComponent.Wechat
                 stringA.Append("=");
                 stringA.Append(item.Value);
             }
-
             stringA.Append("&key=");
             stringA.Append(this._settings.SecurityKey);
-            
-            MD5 md5 = MD5.Create();
-            md5.Initialize();
 
-            byte[] hash = md5.ComputeHash(Encoding.UTF8.GetBytes(stringA.ToString()));
+            byte[] hash = null;
+
+            if (this._settings.SignType == WechatPaySignType.MD5)
+            {
+                
+                MD5 md5 = MD5.Create();
+                md5.Initialize();
+
+                hash = md5.ComputeHash(Encoding.UTF8.GetBytes(stringA.ToString()));
+
+            }
+            else
+            {
+                Console.WriteLine(stringA.ToString());
+                KeyedHashAlgorithm hashAlgo = new HMACSHA256(
+                    Encoding.UTF8.GetBytes(this._settings.SecurityKey)
+                );
+                hashAlgo.Initialize();
+
+                hash = hashAlgo.ComputeHash(Encoding.UTF8.GetBytes(stringA.ToString()));
+            }
+
+            if (hash == null)
+            {
+                throw new InvalidOperationException(nameof(hash));
+            }
 
             StringBuilder signBuilder = new StringBuilder();
-            for(int i = 0; i < 16; i++)
+            for(int i = 0; i < 32; i++)
             {
                 signBuilder.Append(hash[i].ToString("X2"));
             }

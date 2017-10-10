@@ -3,12 +3,14 @@ using Demeter.PayComponent.Wechat.RequestEntity.Attribute;
 
 namespace Demeter.PayComponent.Wechat.RequestEntity
 {
-    public sealed class UnifiedOrder
+    public sealed class UnifiedOrderRequest
     {
         [RequestName("body")]
         public string Body { get; set; }
         [RequestName("detail")]
         public string Detail { get; set; }
+        [RequestName("device_info")]
+        public string DeviceInfomation { get; set; }
         [RequestName("attach")]
         public string Attach { get; set; }
         [RequestName("out_trade_no")]
@@ -16,13 +18,13 @@ namespace Demeter.PayComponent.Wechat.RequestEntity
         [RequestName("fee_type")]
         public string FeeType { get; set; }
         [RequestName("total_fee")]
-        public int TotalFee { get; set; }
+        public int? TotalFee { get; set; }
         [RequestName("spbill_create_ip")]
         public string SpbillCreateIp { get; set; }
         [RequestName("time_start")]
-        public DateTime? TimeStart { get; set; }
+        public string TimeStart { get; set; }
         [RequestName("time_expire")]
-        public DateTime? TimeExpire { get; set; }
+        public string TimeExpire { get; set; }
         [RequestName("goods_tag")]
         public string GoodsTag { get; set; }
         [RequestName("notify_url")]

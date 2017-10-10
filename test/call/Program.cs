@@ -11,25 +11,27 @@ namespace call
         {
             IWechatPay pay = new WechatPay(new WechatPaySettings
             {
-                AppId = "1",
-                MerchantId = "2",
+                AppId = "wxd930ea5d5a258f4f",
+                MerchantId = "10000100",
                 AppSecurity = "3",
-                SecurityKey = "4",
-                PaymentNotifyURI = "5"
+                SecurityKey = "192006250b4c09247ec02edce69f6a2d",
+                PaymentNotifyURI = "",
+                SignType = WechatPaySignType.HMACSHA256
             });
 
-            var a = pay.Pay(new UnifiedOrder
+            var a = pay.Pay(new UnifiedOrderRequest
             {
-                Body = "6",
-                OutTradeNumber = "7",
-                TotalFee = 8,
-                SpbillCreateIp = "9",
-                TradeType = "10"
+                DeviceInfomation = "1000",
+                Body = "test",
+                OutTradeNumber = "1",
+                TotalFee = 2,
+                SpbillCreateIp = "1",
+                TradeType = WechatPayTradeType.JSAPI
             });
 
             a.Wait();
 
-            Console.WriteLine(a.Result);
+            Console.WriteLine(a.Result.AppId);
         }
     }
 }
