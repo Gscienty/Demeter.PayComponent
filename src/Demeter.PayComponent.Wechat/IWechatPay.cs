@@ -8,7 +8,7 @@ namespace Demeter.PayComponent.Wechat
     {
         Task<UnifiedOrderResponse> Pay(UnifiedOrderRequest unifiedOrder);
 
-        void Query();
+        Task<OrderQueryResponse> Query(OrderQueryRequest orderQuery);
 
         void Close();
 

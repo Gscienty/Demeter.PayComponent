@@ -22,6 +22,7 @@ namespace Demeter.PayComponent.Wechat
         private readonly WechatPaySettings _settings;
         private readonly SortedList<string, string> _commonRequestEntity;
         private readonly ISet<string> _payRequireProperties;
+        private readonly ISet<string> _queryRequireProperties;
         private const string ALPHA_DICTIONARY = "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
 
 
@@ -37,6 +38,8 @@ namespace Demeter.PayComponent.Wechat
             this._payRequireProperties = new SortedSet<string>(
                 new [] { "body", "out_trade_no", "total_fee", "spbill_create_ip", "trade_type"}
             );
+
+            this._queryRequireProperties = new SortedSet<string>();
         }
 
         void IWechatPay.Close()
@@ -48,15 +51,15 @@ namespace Demeter.PayComponent.Wechat
         async Task<UnifiedOrderResponse> IWechatPay.Pay(UnifiedOrderRequest unifiedOrder)
         {
             //生成请求字段集合原料
-            var requestEntity = this.GenerateCommonRequestEntity();
-            requestEntity.Add("notify_url", this._settings.PaymentNotifyURI);
+            var properties = this.GenerateCommonRequestEntity();
+            properties.Add("notify_url", this._settings.PaymentNotifyURI);
 
             //填充请求字段集合
-            this.FillRequestEntity(ref requestEntity, unifiedOrder, this._payRequireProperties);
+            this.FillRequestEntity(ref properties, unifiedOrder, this._payRequireProperties);
 
             //获取响应
             UnifiedOrderResponse response = await this.CallAsync<UnifiedOrderResponse>(
-                Constant.UnifiedOrder, requestEntity);
+                Constant.UnifiedOrder, properties);
             
             //检验响应体合法性
             if (this.CheckResponseLegal(response))
@@ -69,9 +72,25 @@ namespace Demeter.PayComponent.Wechat
             }
         }
 
-        void IWechatPay.Query()
+        //查询支付情况
+        async Task<OrderQueryResponse> IWechatPay.Query(OrderQueryRequest orderQuery)
         {
-            throw new System.NotImplementedException();
+            //生成请求字段集合原料
+            var properties = this.GenerateCommonRequestEntity();
+            //填充请求字段集合
+            this.FillRequestEntity(ref properties, orderQuery, this._queryRequireProperties);
+            //获取响应
+            OrderQueryResponse response = await this.CallAsync<OrderQueryResponse>(
+                Constant.OrderQuery, properties);
+            //检验响应体合法性
+            if (this.CheckResponseLegal(response))
+            {
+                return response;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         void IWechatPay.Refund()
@@ -83,7 +102,7 @@ namespace Demeter.PayComponent.Wechat
         private bool CheckResponseLegal<T>(T entity)
             where T : ResponseBase, new()
         {
-            SortedList<string, string> properies = new SortedList<string, string>();
+            SortedList<string, string> properties = new SortedList<string, string>();
             foreach (PropertyInfo property in typeof(T).GetRuntimeProperties())
             {
                 ResponseNameAttribute requestName = property.GetCustomAttribute<ResponseNameAttribute>();
@@ -94,11 +113,11 @@ namespace Demeter.PayComponent.Wechat
                 object value = property.GetValue(entity);
                 if (value != null)
                 {
-                    properies.Add(requestName.Name, value.ToString());
+                    properties.Add(requestName.Name, value.ToString());
                 }
             }
 
-            string sign = this.CalculateSign(properies, entity.SignType == null
+            string sign = this.CalculateSign(properties, entity.SignType == null
                 ? WechatPaySignType.MD5
                 : entity.SignType == "MD5"
                     ? WechatPaySignType.MD5
@@ -109,11 +128,11 @@ namespace Demeter.PayComponent.Wechat
         }
 
         //远程调用
-        private async Task<T> CallAsync<T>(string uri, SortedList<string, string> requestProperies)
+        private async Task<T> CallAsync<T>(string uri, SortedList<string, string> requestProperties)
             where T : class, new()
         {
             //构造请求体Body部分
-            string postBody = this.GeneratePostBody(requestProperies);
+            string postBody = this.GeneratePostBody(requestProperties);
 
             //POST发送请求
             HttpClient sender = new HttpClient();
@@ -128,11 +147,11 @@ namespace Demeter.PayComponent.Wechat
         }
 
         //通过X509证书双向认证的远程调用
-        private async Task<T> SafelyCallAsync<T>(string uri, SortedList<string, string> requestProperies)
+        private async Task<T> SafelyCallAsync<T>(string uri, SortedList<string, string> requestProperties)
             where T : class, new()
         {
             //构造请求体Body部分
-            string postBody = this.GeneratePostBody(requestProperies);
+            string postBody = this.GeneratePostBody(requestProperties);
 
             //添加证书
             HttpClientHandler handler = new HttpClientHandler();
@@ -151,16 +170,16 @@ namespace Demeter.PayComponent.Wechat
         }
 
         //生成请求体Body部分
-        private string GeneratePostBody(SortedList<string, string> requestProperies)
+        private string GeneratePostBody(SortedList<string, string> requestProperties)
         {
             //计算签名
-            requestProperies.Add("sign", this.CalculateSign(requestProperies, this._settings.SignType));
+            requestProperties.Add("sign", this.CalculateSign(requestProperties, this._settings.SignType));
 
             XmlDocument requestDocument = new XmlDocument();
             XmlElement rootElement = requestDocument.CreateElement("xml");
             requestDocument.AppendChild(rootElement);
 
-            foreach(var item in requestProperies)
+            foreach(var item in requestProperties)
             {
                 XmlElement propertyElement = requestDocument.CreateElement(item.Key);
                 propertyElement.InnerXml = item.Value;
@@ -203,7 +222,7 @@ namespace Demeter.PayComponent.Wechat
         //entity为请求实体
         //required集合中记录了必填的字段名
         private void FillRequestEntity(
-            ref SortedList<string, string> requestProperies, object entity, ISet<string> required)
+            ref SortedList<string, string> requestProperties, object entity, ISet<string> required)
         {
             foreach (PropertyInfo property in entity.GetType().GetRuntimeProperties())
             {
@@ -219,18 +238,18 @@ namespace Demeter.PayComponent.Wechat
                 }
                 if (value != null)
                 {
-                    requestProperies.Add(requestName.Name, value.ToString());
+                    requestProperties.Add(requestName.Name, value.ToString());
                 }
             }
         }
 
         //根据属性列表计算签名
-        private string CalculateSign(SortedList<string, string> properies, WechatPaySignType signType)
+        private string CalculateSign(SortedList<string, string> properties, WechatPaySignType signType)
         {
             StringBuilder stringA = new StringBuilder();
             bool isFirst = true;
                 
-            foreach(KeyValuePair<string, string> item in properies)
+            foreach(KeyValuePair<string, string> item in properties)
             {
                 if (item.Key == "sign")
                 {
