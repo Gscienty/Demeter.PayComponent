@@ -12,6 +12,6 @@ namespace Demeter.PayComponent.Wechat
 
         void Close();
 
-        void Refund();
+        Task<RefundResponse> Refund(RefundRequest refund);
     }
 }

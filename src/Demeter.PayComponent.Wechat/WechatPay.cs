@@ -23,6 +23,7 @@ namespace Demeter.PayComponent.Wechat
         private readonly SortedList<string, string> _commonRequestEntity;
         private readonly ISet<string> _payRequireProperties;
         private readonly ISet<string> _queryRequireProperties;
+        private readonly ISet<string> _refundRequireProperties;
         private const string ALPHA_DICTIONARY = "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
 
 
@@ -40,6 +41,10 @@ namespace Demeter.PayComponent.Wechat
             );
 
             this._queryRequireProperties = new SortedSet<string>();
+
+            this._refundRequireProperties = new SortedSet<string>(
+                new [] { "out_refund_no", "total_fee", "refund_fee" }
+            );
         }
 
         void IWechatPay.Close()
@@ -93,9 +98,25 @@ namespace Demeter.PayComponent.Wechat
             }
         }
 
-        void IWechatPay.Refund()
+        //退款
+        async Task<RefundResponse> IWechatPay.Refund(RefundRequest refund)
         {
-            throw new System.NotImplementedException();
+            //生成请求字段集合原料
+            var properties = this.GenerateCommonRequestEntity();
+            //填充请求字段集合
+            this.FillRequestEntity(ref properties, refund, this._refundRequireProperties);
+            //获取响应
+            RefundResponse response = await this.SafelyCallAsync<RefundResponse>(
+                Constant.Refund, properties);
+            //检验响应体合法性
+            if (this.CheckResponseLegal(response))
+            {
+                return response;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         //检验响应体的合法性
